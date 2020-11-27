@@ -50,7 +50,7 @@ def readAllImageData(image_data):
 
 def downloadData(url_list,filename_list):
     # creating a LabelboxData folder in user's local machine's download directory
-    download_path = os.path.expanduser("~") + "/Downloads/LabelboxData/"
+    download_path = os.path.expanduser("~") + "/Downloads/labels/"
     print(url_list)
     if not os.path.exists(download_path):
         os.makedirs(download_path)
