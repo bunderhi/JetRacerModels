@@ -38,7 +38,7 @@ def load_images_from_folder(in_folder,out_folder,CLAHE):
         else:
             img2 = img
             print("No CLAHE")
-        crop_img = img2[250:550, 125:775].copy()
+        crop_img = img2[230:550, 130:770].copy()
         cv.imwrite(os.path.join(out_folder,filename),crop_img) 
 
 if __name__ == '__main__':
