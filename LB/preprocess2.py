@@ -10,8 +10,8 @@ Options:
     -h --help     Show this screen.
     --version     Show version.
     -e  Run Histogram equalization 
-    -i --in=<directory>   Directory to find the raw images [default: /home/brian/Downloads/raw_train_data]
-    -o --out=<directory>  Directory to put the processed images [default: /home/brian/Downloads/train_data/Images]
+    -i --in=<directory>   Directory to find the raw images [default: /home/brian/Downloads/labels]
+    -o --out=<directory>  Directory to put the processed images [default: /home/brian/Downloads/train_data/Masks]
 
 """
 from docopt import docopt
