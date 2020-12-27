@@ -2,6 +2,7 @@ import torch
 import torch2trt
 import time
 import cv2
+import segmentation_models_pytorch as smp
 
 class ModelWrapper(torch.nn.Module):
     def __init__(self, model):
@@ -18,7 +19,14 @@ def equalize(im):
     im2 = cv2.cvtColor(cli,cv2.COLOR_GRAY2RGB)
     return im2
 
-model = torch.load('/home/brian/models/run09/weights.pt')
+model = smp.Unet(
+    encoder_name="resnet18",        # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
+    encoder_weights="imagenet",     # use `imagenet` pretrained weights for encoder initialization
+    classes=1,
+    activation="sigmoid",          # model output channels (number of classes in your dataset)
+)
+
+model = torch.load('/models/run09/weights.pt')
 model = model.cuda().eval().half()
 model_w = ModelWrapper(model).half()
 data = torch.ones((1,3,320,640)).cuda().half()
@@ -27,10 +35,10 @@ t0 = time.time()
 model_trt = torch2trt.torch2trt(model_w, [data], max_workspace_size=1 << 20, fp16_mode=True)
 t1 = time.time()
 print('finish ',t1-t0)
-#torch.save(model_trt.state_dict(), '/home/brian/models/jetson/model_trt.pt')
+torch.save(model_trt.state_dict(), '/models/run09/model_trt.pt')
 ino = 858
 # Read  a sample image
-img = cv2.imread(f'/home/brian/train_data//{ino:03d}.jpg')
+img = cv2.imread(f'/models/train_data/{ino:03d}.jpg')
 #img2 = equalize(img)
 #crop_img = img2[320:550, 200:700].copy()
 #img3 = crop_img.transpose(2,0,1).reshape(1,3,230,500)

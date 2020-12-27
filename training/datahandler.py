@@ -147,7 +147,7 @@ class RandomHorizontalFlip(object):
         if random.random() < self.flip_prob:
             image = hflip(image)
             mask = hflip(mask)
-        return {'image': image, 'mask': }
+        return {'image': image, 'mask': mask }
 
 
 
@@ -171,8 +171,10 @@ def get_dataloader_sep_folder(data_dir, imageFolder='Image', maskFolder='Mask', 
         ---------Mask1
         ---------MaskN
     """
+    hzflip = RandomHorizontalFlip(0.5)
+
     data_transforms = {
-        'Train': transforms.Compose([RandomHorizontalFlip(),ToTensor(), Normalize()]),
+        'Train': transforms.Compose([hzflip(),ToTensor(), Normalize()]),
         'Test': transforms.Compose([ToTensor(), Normalize()]),
     }
 
@@ -189,8 +191,10 @@ def get_dataloader_single_folder(data_dir, imageFolder='Images', maskFolder='Mas
     """
         Create training and testing dataloaders from a single folder.
     """
+    hzflip = RandomHorizontalFlip(0.5)
+
     data_transforms = {
-        'Train': transforms.Compose([ToTensor(), Normalize()]),
+        'Train': transforms.Compose([hzflip(),ToTensor(), Normalize()]),
         'Test': transforms.Compose([ToTensor(), Normalize()]),
     }
 
