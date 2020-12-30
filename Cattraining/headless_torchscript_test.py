@@ -11,6 +11,11 @@ model = jit.load('/models/run10/model.zip')
 model = model.cuda().eval()
 
 
+# Export ONNX format 
+x = torch.ones(1, 3, 320, 640, requires_grad=True).cuda()
+#torch.onnx.export(model,x,'/home/brian/models/run10/jetracer.onnx',export_params=True,opset_version=11,do_constant_folding=True)
+torch.onnx.export(model,x,'/home/brian/models/run10/jetracer.onnx',export_params=True)
+
 ino = 536
 # Read  a sample image and mask from the data-set
 img = cv2.imread(f'/models/train_data/Images/{ino:03d}.jpg').transpose(2,0,1).reshape(1,3,320,640)
