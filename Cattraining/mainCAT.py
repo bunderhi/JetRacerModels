@@ -63,7 +63,7 @@ model_params = utils.process_model_params(model, layerwise_params=layerwise_para
 
 # Specify the optimizer and LR scheduler
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',factor=0.1, patience=2,verbose=True)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max',factor=0.5, patience=2,verbose=True)
 
 # Specify the optimizer with a lower learning rate
 #optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)

@@ -37,7 +37,7 @@ def get_engine(onnx_file_path, engine_file_path=""):
                         print (parser.get_error(error))
                     return None
             # The actual yolov3.onnx is generated with batch size 64. Reshape input to batch size 1
-            network.get_input(0).shape = [1, 3, 320, 640]
+            network.get_input(0).shape = [1, 3, 160, 320]
             print('Completed parsing of ONNX file')
             print('Building an engine from file {}; this may take a while...'.format(onnx_file_path))
             engine = builder.build_cuda_engine(network)

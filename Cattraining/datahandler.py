@@ -96,18 +96,15 @@ class SegDataset(Dataset):
 class Resize(object):
     """Resize image and/or masks."""
 
-    def __init__(self, imageresize, maskresize):
-        self.imageresize = imageresize
-        self.maskresize = maskresize
-
     def __call__(self, sample):
         image, mask = sample['image'], sample['mask']
         if len(image.shape) == 3:
             image = image.transpose(1, 2, 0)
         if len(mask.shape) == 3:
             mask = mask.transpose(1, 2, 0)
-        mask = cv2.resize(mask, self.maskresize, cv2.INTER_AREA)
-        image = cv2.resize(image, self.imageresize, cv2.INTER_AREA)
+        mask = cv2.resize(mask,None,fx=0.5,fy=0.5,interpolation=cv2.INTER_AREA)
+        # to enlarge switch to INTER_LINEAR
+        image = cv2.resize(image,None,fx=0.5,fy=0.5,interpolation=cv2.INTER_AREA)
         if len(image.shape) == 3:
             image = image.transpose(2, 0, 1)
         if len(mask.shape) == 3:
@@ -138,14 +135,14 @@ class Normalize(object):
         return {'image': image.type(torch.FloatTensor)/255,
                 'mask': mask.type(torch.FloatTensor)/255}
 
-#class RandomHorizontalFlip(object):
-#    '''randomly horz flip image'''
-#    def __call__(self, sample):
-#        image, mask = sample['image'], sample['mask']
-#        if random.random() < 0.5:
-#            image = transforms.functional.hflip(image)
-#            mask = transforms.functional.hflip(mask)
-#        return {'image': image, 'mask': mask }
+class RandomHorizontalFlip(object):
+    '''randomly horz flip image'''
+    def __call__(self, sample):
+        image, mask = sample['image'], sample['mask']
+        if random.random() < 0.5:
+            image = np.flip(image,1).copy()
+            mask = np.flip(mask,1).copy()
+        return {'image': image, 'mask': mask }
 
 
 
@@ -171,8 +168,8 @@ def get_dataloader_sep_folder(data_dir, imageFolder='Image', maskFolder='Mask', 
     """
 
     data_transforms = {
-        'Train': transforms.Compose([ToTensor(), Normalize()]),
-        'Test': transforms.Compose([ToTensor(), Normalize()]),
+        'Train': transforms.Compose([Resize(), RandomHorizontalFlip(), ToTensor(), Normalize()]),
+        'Test': transforms.Compose([Resize(), ToTensor(), Normalize()]),
     }
 
     image_datasets = {x: SegDataset(root_dir=os.path.join(data_dir, x),
@@ -190,8 +187,8 @@ def get_dataloader_single_folder(data_dir, imageFolder='Images', maskFolder='Mas
     """
 
     data_transforms = {
-        'Train': transforms.Compose([ToTensor(), Normalize()]),
-        'Test': transforms.Compose([ToTensor(), Normalize()]),
+        'Train': transforms.Compose([Resize(), RandomHorizontalFlip(), ToTensor(), Normalize()]),
+        'Test': transforms.Compose([Resize(), ToTensor(), Normalize()]),
     }
 
     image_datasets = {x: SegDataset(data_dir, imageFolder=imageFolder, maskFolder=maskFolder, seed=100, fraction=fraction, subset=x, transform=data_transforms[x])
